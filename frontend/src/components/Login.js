@@ -1,6 +1,7 @@
 // src/components/Login.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -42,15 +43,16 @@ const Button = styled.button`
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const userData = {
       username,
       password
     };
-  
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: 'POST',
@@ -59,12 +61,13 @@ const Login = () => {
         },
         body: JSON.stringify(userData)
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log('Logged in successfully', data);
-        // Handle successful login (e.g., store token, redirect, etc.)
+        localStorage.setItem('token', data.token); // Store the token
+        navigate('/dashboard') // Redirect to dashboard
       } else {
         console.log('Login failed', data);
         // Handle login failure (e.g., display error message)
@@ -74,7 +77,6 @@ const Login = () => {
       // Handle error (e.g., display error message)
     }
   };
-  
 
   return (
     <Container>
