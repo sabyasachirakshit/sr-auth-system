@@ -1,7 +1,7 @@
 // src/components/Login.js
 import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
