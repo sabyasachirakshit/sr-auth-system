@@ -38,8 +38,12 @@ router.post("/register", async (req, res) => {
   }
   try {
     let user = await User.findOne({ username });
+    let num = await User.findOne({ number });
     if (user) {
-      return res.status(400).json({ msg: "User already exists" });
+      return res.status(400).json({ msg: `User named ${username} already exists` });
+    }
+    if (num) {
+      return res.status(400).json({ msg: `User of the given number ${number} already exists` });
     }
     user = new User({ username, firstname, lastname, number, password });
     await user.save();

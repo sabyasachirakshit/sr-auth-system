@@ -74,8 +74,8 @@ const Register = () => {
     if (!data.number) errors.number = 'Number is required';
     else if (!/^\d{10}$/.test(data.number)) errors.number = 'Number must be 10 digits';
     if (!data.password) errors.password = 'Password is required';
-    else if (!/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{10,}$/.test(data.password)) {
-      errors.password = 'Password must be atleast 10 characters long, contain a number, an uppercase letter, and no spaces';
+    else if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{10,}$/.test(data.password)) {
+      errors.password = 'Password must be at least 10 characters long, contain a number, an uppercase letter, a special character, and no spaces';
     }
     if (data.password !== data.confirmPassword) errors.confirmPassword = 'Passwords do not match';
     return errors;
@@ -99,8 +99,7 @@ const Register = () => {
         const data = await response.json();
     
         if (response.ok) {
-          console.log('Registered successfully', data);
-          alert(`You are registered successfully ${formData.firstname}. Please login now`)
+          alert(`Registered successfully ${formData.firstname}. Please login now`)
           navigate("/login");
           // Handle successful login (e.g., store token, redirect, etc.)
         } else {
