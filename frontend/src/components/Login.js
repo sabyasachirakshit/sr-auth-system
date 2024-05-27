@@ -1,7 +1,7 @@
 // src/components/Login.js
 import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -39,14 +39,6 @@ const Button = styled.button`
     background-color: #0056b3;
   }
 `;
-
-
-
-
-
-
-
-
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -91,6 +83,7 @@ const Login = () => {
         navigate('/dashboard') // Redirect to dashboard
       } else {
         console.log('Login failed', data);
+        window.alert(data.msg);
         // Handle login failure (e.g., display error message)
       }
     } catch (err) {
@@ -106,16 +99,19 @@ const Login = () => {
         <Input
           type="text"
           placeholder="Username"
+          required={true}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <Input
           type="password"
           placeholder="Password"
+          required={true}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <Button type="submit">Login</Button>
+        <p>New here? <Link to="/register">register yourself</Link></p>
       </Form>
     </Container>
   );

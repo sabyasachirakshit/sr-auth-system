@@ -1,5 +1,6 @@
 // src/components/Register.js
 import React, { useState } from 'react';
+import {useNavigate} from "react-router-dom";
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -40,6 +41,7 @@ const Button = styled.button`
 `;
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     firstname: '',
@@ -71,9 +73,13 @@ const Register = () => {
     
         if (response.ok) {
           console.log('Registered successfully', data);
+          alert(`You are registered successfully ${formData.firstname}. Please login now`)
+
           // Handle successful login (e.g., store token, redirect, etc.)
         } else {
           console.log('Registering failed', data);
+          alert(data.msg);
+          navigate("/login");
           // Handle login failure (e.g., display error message)
         }
       } catch (err) {
@@ -91,6 +97,7 @@ const Register = () => {
           type="text"
           name="username"
           placeholder="Username"
+          required={true}
           value={formData.username}
           onChange={handleChange}
         />
@@ -98,6 +105,7 @@ const Register = () => {
           type="text"
           name="firstname"
           placeholder="First Name"
+          required={true}
           value={formData.firstname}
           onChange={handleChange}
         />
@@ -105,6 +113,7 @@ const Register = () => {
           type="text"
           name="lastname"
           placeholder="Last Name"
+          required={true}
           value={formData.lastname}
           onChange={handleChange}
         />
@@ -112,6 +121,7 @@ const Register = () => {
           type="number"
           name="number"
           placeholder="Phone Number"
+          required={true}
           value={formData.number}
           onChange={handleChange}
         />
@@ -119,6 +129,7 @@ const Register = () => {
           type="password"
           name="password"
           placeholder="Password"
+          required={true}
           value={formData.password}
           onChange={handleChange}
         />

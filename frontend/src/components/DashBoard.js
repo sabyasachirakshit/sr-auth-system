@@ -17,9 +17,7 @@ const Dashboard = () => {
         setRedirectToLogin(true); // Set state to trigger redirect
         return;
       }
-
       try {
-        console.log("Hey this is the token in dashboard:",token);
         const response = await fetch('http://localhost:5000/api/user/data', {
           method: 'GET',
           headers: {
