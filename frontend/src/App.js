@@ -7,6 +7,7 @@ import {
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/DashBoard';
+import Logout from './components/Logout';
 
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+  {
+    path:"/logout",
+    element:<Logout />
+  }
 ]);
 
 const App = () => {

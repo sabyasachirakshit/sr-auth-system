@@ -1,7 +1,7 @@
 // src/components/Login.js
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -40,10 +40,31 @@ const Button = styled.button`
   }
 `;
 
+
+
+
+
+
+
+
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [redirectToDashboard, setRedirectToDashboard] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setRedirectToDashboard(true); // Set state to trigger redirect
+      return;
+    }
+  }, [])
+
+  if (redirectToDashboard) {
+    navigate('/dashboard'); // Perform the redirect
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

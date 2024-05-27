@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Navigate } from 'react-router-dom';
+import { Navigate ,Link} from 'react-router-dom';
 
 const Container = styled.div`
   padding: 20px;
@@ -59,6 +59,7 @@ const Dashboard = () => {
       <p>First Name: {userData.firstname}</p>
       <p>Last Name: {userData.lastname}</p>
       <p>Phone Number: {userData.number}</p>
+      <Link to="/logout"><button>Logout</button></Link>
       {/* Add more user-related data as needed */}
     </Container>
   );
