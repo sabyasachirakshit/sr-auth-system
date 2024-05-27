@@ -30,7 +30,6 @@ const config = require('../config');
 module.exports = function (req, res, next) {
   // Get token from header
   const authHeader = req.header('Authorization');
-  console.log('Authorization Header:', authHeader);
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
@@ -46,8 +45,6 @@ module.exports = function (req, res, next) {
   // Verify token
   try {
     const jwtSecret = config.jwtSecret;
-    console.log('JWT Secret:', jwtSecret);
-    console.log('Token:', token);
     
     const decoded = jwt.verify(token, jwtSecret); // Use hardcoded secret for testing if needed
     req.user = decoded.user;
