@@ -1,6 +1,6 @@
 // src/components/Register.js
 import React, { useState } from 'react';
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -170,6 +170,7 @@ const Register = () => {
         />
         {errors.confirmPassword && <Error>{errors.confirmPassword}</Error>}
         <Button type="submit">Register</Button>
+        <p>Already a user? <Link to="/login">login</Link></p>
       </Form>
     </Container>
   );
