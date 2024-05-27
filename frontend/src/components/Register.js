@@ -40,8 +40,14 @@ const Button = styled.button`
   }
 `;
 
+const Error = styled.p`
+  color: red;
+`;
+
 const Register = () => {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+
   const [formData, setFormData] = useState({
     username: '',
     firstname: '',
@@ -57,9 +63,30 @@ const Register = () => {
     });
   };
 
+  const validate = (data) => {
+    let errors = {};
+    if (!data.username) errors.username = 'Username is required';
+    else if (data.username.length < 6) errors.username = 'Username must be 6 characters long';
+    if (!data.firstname) errors.firstname = 'First name is required';
+    else if (data.firstname.length < 3 || data.firstname.length > 50) errors.firstname = 'First name must be between 3 and 50 characters';
+    if (!data.lastname) errors.lastname = 'Last name is required';
+    else if (data.lastname.length < 3 || data.lastname.length > 50) errors.lastname = 'Last name must be between 3 and 50 characters';
+    if (!data.number) errors.number = 'Number is required';
+    else if (!/^\d{10}$/.test(data.number)) errors.number = 'Number must be 10 digits';
+    if (!data.password) errors.password = 'Password is required';
+    else if (!/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{10,}$/.test(data.password)) {
+      errors.password = 'Password must be atleast 10 characters long, contain a number, an uppercase letter, and no spaces';
+    }
+    if (data.password !== data.confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    return errors;
+  };
+
   const handleSubmit = async(e) => {
     e.preventDefault();
-    
+    const errors = validate(formData);
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+    } else{
       try {
         const response = await fetch("http://localhost:5000/api/auth/register", {
           method: 'POST',
@@ -74,18 +101,20 @@ const Register = () => {
         if (response.ok) {
           console.log('Registered successfully', data);
           alert(`You are registered successfully ${formData.firstname}. Please login now`)
-
+          navigate("/login");
           // Handle successful login (e.g., store token, redirect, etc.)
         } else {
           console.log('Registering failed', data);
           alert(data.msg);
-          navigate("/login");
+          
           // Handle login failure (e.g., display error message)
         }
       } catch (err) {
         console.error('Error:', err);
         // Handle error (e.g., display error message)
       }
+    }
+      
     console.log('Registering', formData);
   };
 
@@ -95,44 +124,52 @@ const Register = () => {
         <h2>Register</h2>
         <Input
           type="text"
-          name="username"
           placeholder="Username"
-          required={true}
+          name="username"
           value={formData.username}
           onChange={handleChange}
         />
+        {errors.username && <Error>{errors.username}</Error>}
         <Input
           type="text"
-          name="firstname"
           placeholder="First Name"
-          required={true}
+          name="firstname"
           value={formData.firstname}
           onChange={handleChange}
         />
+        {errors.firstname && <Error>{errors.firstname}</Error>}
         <Input
           type="text"
-          name="lastname"
           placeholder="Last Name"
-          required={true}
+          name="lastname"
           value={formData.lastname}
           onChange={handleChange}
         />
+        {errors.lastname && <Error>{errors.lastname}</Error>}
         <Input
-          type="number"
+          type="text"
+          placeholder="Number"
           name="number"
-          placeholder="Phone Number"
-          required={true}
           value={formData.number}
           onChange={handleChange}
         />
+        {errors.number && <Error>{errors.number}</Error>}
         <Input
           type="password"
-          name="password"
           placeholder="Password"
-          required={true}
+          name="password"
           value={formData.password}
           onChange={handleChange}
         />
+        {errors.password && <Error>{errors.password}</Error>}
+        <Input
+          type="password"
+          placeholder="Confirm Password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+        {errors.confirmPassword && <Error>{errors.confirmPassword}</Error>}
         <Button type="submit">Register</Button>
       </Form>
     </Container>
