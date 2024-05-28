@@ -31,11 +31,12 @@ const Dashboard = () => {
         if (response.ok) {
           setUserData(data);
         } else {
-          console.log('Failed to fetch user data', data);
+          localStorage.removeItem('token'); // Remove expired token 
           setRedirectToLogin(true); // Redirect to login on failure
         }
       } catch (err) {
         console.error('Error:', err);
+        alert(err);
         setRedirectToLogin(true); // Redirect to login on error
       }
     };

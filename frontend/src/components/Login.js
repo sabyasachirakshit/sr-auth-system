@@ -51,7 +51,7 @@ const Login = () => {
     if (token) {
       setRedirectToDashboard(true); // Set state to trigger redirect
       return;
-    }
+    } 
   }, [])
 
   if (redirectToDashboard) {
