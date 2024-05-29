@@ -51,6 +51,7 @@ const ForgotPassword = () => {
   const [errors, setErrors] = useState({});
   const [securityQuestion, setSecurityQuestion] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [newConfirmPassword, setNewConfirmPassword] = useState("");
   const [showSecurityQuestion, setShowSecurityQuestion] = useState(false);
 
   const handleFetchSecurityQuestion = async () => {
@@ -83,6 +84,8 @@ const ForgotPassword = () => {
     ) {
       errors.password =
         "Password must be at least 10 characters long, contain a number, an uppercase letter, a special character, and no spaces";
+    } else if (data !== newConfirmPassword) {
+      errors.confirmPass = "Passwords do not match!";
     }
     return errors;
   };
@@ -148,6 +151,13 @@ const ForgotPassword = () => {
               onChange={(e) => setNewPassword(e.target.value)}
             />
             {errors.password && <Error>{errors.password}</Error>}
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              value={newConfirmPassword}
+              onChange={(e) => setNewConfirmPassword(e.target.value)}
+            />
+            {errors.confirmPass && <Error>{errors.confirmPass}</Error>}
             <Button type="submit">Reset Password</Button>
           </>
         )}
