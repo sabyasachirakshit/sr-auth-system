@@ -75,7 +75,7 @@ const ForgotPassword = () => {
   const handleFetchSecurityQuestion = async () => {
     const msg=message.loading("Trying to get you in..",0);
     const response = await fetch(
-      "https://sr-express.onrender.com/api/auth/forgot-password",
+      "http://localhost:5000/api/auth/forgot-password",
       {
         method: "POST",
         headers: {
@@ -119,7 +119,7 @@ const ForgotPassword = () => {
       setErrors(errors);
     } else {
       const response = await fetch(
-        "https://sr-express.onrender.com/api/auth/reset-password",
+        "http://localhost:5000/api/auth/reset-password",
         {
           method: "POST",
           headers: {
