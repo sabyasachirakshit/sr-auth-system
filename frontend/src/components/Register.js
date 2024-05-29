@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { message } from "antd";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -128,13 +129,14 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const msg = message.loading("Registering...",0);
     const errors = validate(formData);
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
     } else {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/auth/register",
+          "https://sr-express.onrender.com/api/auth/register",
           {
             method: "POST",
             headers: {
@@ -147,20 +149,21 @@ const Register = () => {
         const data = await response.json();
 
         if (response.ok) {
-          alert(
-            `Registered successfully ${formData.firstname}. Please login now`
+          message.success(
+            `Registered successfully ${formData.firstname}. Please login now`,3
           );
           navigate("/login");
           // Handle successful login (e.g., store token, redirect, etc.)
         } else {
-          console.log("Registering failed", data);
-          alert(data.msg);
+          message.error(data.msg,3);
           // Handle login failure (e.g., display error message)
         }
       } catch (err) {
-        alert(err);
+        message.error(err,3); 
         console.error("Error:", err);
         // Handle error (e.g., display error message)
+      }finally{
+        msg();
       }
     }
 

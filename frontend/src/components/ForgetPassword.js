@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -72,8 +73,9 @@ const ForgotPassword = () => {
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const handleFetchSecurityQuestion = async () => {
+    const msg=message.loading("Trying to get you in..",0);
     const response = await fetch(
-      "http://localhost:5000/api/auth/forgot-password",
+      "https://sr-express.onrender.com/api/auth/forgot-password",
       {
         method: "POST",
         headers: {
@@ -86,9 +88,12 @@ const ForgotPassword = () => {
     if (response.ok) {
       setSecurityQuestion(data.securityQuestion);
       setShowSecurityQuestion(true);
+      message.success("Found you!",3);
+      msg();
     } else {
-      alert(data.msg);
+      message.error(data.msg,3);
       console.log(data.msg);
+      msg();
     }
   };
 
@@ -108,12 +113,13 @@ const ForgotPassword = () => {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    const msg=message.loading("Trying to reset password..",3);
     const errors = validate(newPassword);
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
     } else {
       const response = await fetch(
-        "http://localhost:5000/api/auth/reset-password",
+        "https://sr-express.onrender.com/api/auth/reset-password",
         {
           method: "POST",
           headers: {
@@ -124,13 +130,15 @@ const ForgotPassword = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        alert(data.msg);
+        message.success(data.msg,3);
+        
         console.log(data.msg);
         navigate("/login");
       } else {
-        alert(data.msg);
+        message.error(data.msg,3);
         console.log(data.msg);
       }
+      msg();
     }
   };
 
