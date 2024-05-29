@@ -12,6 +12,13 @@ const Container = styled.div`
   background-color: #f0f2f5;
 `;
 
+const Select = styled.select`
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -44,6 +51,14 @@ const Error = styled.p`
   color: red;
 `;
 
+const securityQuestions = [
+  'What was your childhood nickname?',
+  'What is the name of your favorite childhood friend?',
+  'What was the name of your first pet?',
+  'What is your mother’s maiden name?',
+  'What is the name of the town where you were born?'
+];
+
 const Register = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
@@ -53,7 +68,9 @@ const Register = () => {
     firstname: '',
     lastname: '',
     number: '',
-    password: ''
+    password: '',
+    securityQuestion: '',
+    securityAnswer: ''
   });
 
   const handleChange = (e) => {
@@ -109,6 +126,7 @@ const Register = () => {
           // Handle login failure (e.g., display error message)
         }
       } catch (err) {
+        alert(err);
         console.error('Error:', err);
         // Handle error (e.g., display error message)
       }
@@ -169,6 +187,13 @@ const Register = () => {
           onChange={handleChange}
         />
         {errors.confirmPassword && <Error>{errors.confirmPassword}</Error>}
+        <Select name="securityQuestion" value={formData.securityQuestion} onChange={handleChange} required>
+          <option value="">Select a security question</option>
+          {securityQuestions.map((question, index) => (
+            <option key={index} value={question}>{question}</option>
+          ))}
+        </Select>
+        <Input type="text" placeholder="Security Answer" name="securityAnswer" value={formData.securityAnswer} onChange={handleChange} required />
         <Button type="submit">Register</Button>
         <p>Already a user? <Link to="/login">login</Link></p>
       </Form>

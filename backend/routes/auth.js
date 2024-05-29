@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const config = require("../config");
 
-
 // Register a new user
 
 const validateRegisterInput = (
@@ -25,13 +24,13 @@ const validateRegisterInput = (
 };
 
 router.post("/register", async (req, res) => {
-  const { username, firstname, lastname, number, password } = req.body;
+  const { username, firstname, lastname, number, password,securityQuestion,securityAnswer } = req.body;
   const validationError = validateRegisterInput(
     username,
     firstname,
     lastname,
     number,
-    password
+    password,
   );
   if (validationError) {
     return res.status(400).json({ msg: validationError });
@@ -40,12 +39,24 @@ router.post("/register", async (req, res) => {
     let user = await User.findOne({ username });
     let num = await User.findOne({ number });
     if (user) {
-      return res.status(400).json({ msg: `User named ${username} already exists` });
+      return res
+        .status(400)
+        .json({ msg: `User named ${username} already exists` });
     }
     if (num) {
-      return res.status(400).json({ msg: `User of the given number ${number} already exists` });
+      return res
+        .status(400)
+        .json({ msg: `User of the given number ${number} already exists` });
     }
-    user = new User({ username, firstname, lastname, number, password });
+    user = new User({
+      username,
+      firstname,
+      lastname,
+      number,
+      password,
+      securityQuestion,
+      securityAnswer,
+    });
     await user.save();
     res.status(201).json({ msg: "User registered successfully" });
   } catch (err) {
@@ -60,11 +71,11 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({ msg: "User not found" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({ msg: "Incorrect Password" });
     }
     const payload = {
       user: {
@@ -78,6 +89,56 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
+  }
+});
+
+// routes/auth.js
+router.post('/forgot-password', async (req, res) => {
+  const { username } = req.body;
+  try {
+    const user = await User.findOne({ username:username });
+    if (!user) {
+      return res.status(400).json({ msg: 'User not found' });
+    }
+
+    res.status(200).json({ securityQuestion: user.securityQuestion });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+router.post('/reset-password', async (req, res) => {
+  const { username, securityAnswer, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ msg: 'User not found' });
+    }
+
+    const isMatch = securityAnswer === user.securityAnswer;
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Security answer is incorrect' });
+    }
+    
+    console.log("This was old pass:",user.password);
+    console.log("This was new Paswword:",newPassword);
+    try{
+      console.log("attempting..");
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      await user.save();
+      console.log("success");
+    }catch(err){
+      console.log(err);
+    }
+    
+
+    res.status(200).json({ msg: 'Password has been reset successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 
