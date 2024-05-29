@@ -1,7 +1,6 @@
-// src/components/Login.js
-import React, { useState,useEffect } from 'react';
-import styled from 'styled-components';
-import { useNavigate,Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -21,11 +20,27 @@ const Form = styled.form`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
+const InputContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
 const Input = styled.input`
   margin: 10px 0;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  flex: 1;
+`;
+
+const ToggleButton = styled.button`
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
 `;
 
 const Button = styled.button`
@@ -41,21 +56,22 @@ const Button = styled.button`
 `;
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
   const [redirectToDashboard, setRedirectToDashboard] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       setRedirectToDashboard(true); // Set state to trigger redirect
       return;
-    } 
-  }, [])
+    }
+  }, []);
 
   if (redirectToDashboard) {
-    navigate('/dashboard'); // Perform the redirect
+    navigate("/dashboard"); // Perform the redirect
   }
 
   const handleSubmit = async (e) => {
@@ -63,33 +79,37 @@ const Login = () => {
 
     const userData = {
       username,
-      password
+      password,
     };
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Logged in successfully', data);
-        localStorage.setItem('token', data.token); // Store the token
-        navigate('/dashboard') // Redirect to dashboard
+        console.log("Logged in successfully", data);
+        localStorage.setItem("token", data.token); // Store the token
+        navigate("/dashboard"); // Redirect to dashboard
       } else {
-        console.log('Login failed', data);
+        console.log("Login failed", data);
         window.alert(data.msg);
         // Handle login failure (e.g., display error message)
       }
     } catch (err) {
-      console.error('Error:', err);
+      console.error("Error:", err);
       // Handle error (e.g., display error message)
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   return (
@@ -99,20 +119,29 @@ const Login = () => {
         <Input
           type="text"
           placeholder="Username"
-          required={true}
+          required
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <Input
-          type="password"
-          placeholder="Password"
-          required={true}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <InputContainer>
+          <Input
+            type={passwordVisible ? "text" : "password"}
+            placeholder="Password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <ToggleButton type="button" onClick={togglePasswordVisibility}>
+            {passwordVisible ? "🙈" : "👁️"}
+          </ToggleButton>
+        </InputContainer>
         <Button type="submit">Login</Button>
-        <p>New here? <Link to="/register">register yourself</Link></p>
-        <p><Link to="/forgetpass">Forgot Password?</Link></p>
+        <p>
+          New here? <Link to="/register">register yourself</Link>
+        </p>
+        <p>
+          <Link to="/forgetpass">Forgot Password?</Link>
+        </p>
       </Form>
     </Container>
   );

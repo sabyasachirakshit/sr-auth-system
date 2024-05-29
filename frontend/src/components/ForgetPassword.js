@@ -1,4 +1,3 @@
-// src/components/ForgotPassword.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -25,11 +24,27 @@ const Form = styled.form`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
+const InputContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
 const Input = styled.input`
   margin: 10px 0;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  flex: 1;
+`;
+
+const ToggleButton = styled.button`
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
 `;
 
 const Button = styled.button`
@@ -53,9 +68,10 @@ const ForgotPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [newConfirmPassword, setNewConfirmPassword] = useState("");
   const [showSecurityQuestion, setShowSecurityQuestion] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const handleFetchSecurityQuestion = async () => {
-    // Fetch security question from backend
     const response = await fetch(
       "http://localhost:5000/api/auth/forgot-password",
       {
@@ -92,7 +108,6 @@ const ForgotPassword = () => {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    // Handle password reset logic here
     const errors = validate(newPassword);
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
@@ -117,6 +132,14 @@ const ForgotPassword = () => {
         console.log(data.msg);
       }
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
   };
 
   return (
@@ -144,19 +167,32 @@ const ForgotPassword = () => {
               value={securityAnswer}
               onChange={(e) => setSecurityAnswer(e.target.value)}
             />
-            <Input
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
+            <InputContainer>
+              <Input
+                type={passwordVisible ? "text" : "password"}
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <ToggleButton type="button" onClick={togglePasswordVisibility}>
+                {passwordVisible ? "🙈" : "👁️"}
+              </ToggleButton>
+            </InputContainer>
             {errors.password && <Error>{errors.password}</Error>}
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              value={newConfirmPassword}
-              onChange={(e) => setNewConfirmPassword(e.target.value)}
-            />
+            <InputContainer>
+              <Input
+                type={confirmPasswordVisible ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={newConfirmPassword}
+                onChange={(e) => setNewConfirmPassword(e.target.value)}
+              />
+              <ToggleButton
+                type="button"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {confirmPasswordVisible ? "🙈" : "👁️"}
+              </ToggleButton>
+            </InputContainer>
             {errors.confirmPass && <Error>{errors.confirmPass}</Error>}
             <Button type="submit">Reset Password</Button>
           </>
