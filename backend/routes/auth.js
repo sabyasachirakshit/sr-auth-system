@@ -125,7 +125,7 @@ router.post("/reset-password", async (req, res) => {
       return res.status(400).json({ msg: "User not found" });
     }
 
-    const isMatch = securityAnswer === user.securityAnswer;
+    const isMatch = await bcrypt.compare(securityAnswer, user.securityAnswer);
     if (!isMatch) {
       return res.status(400).json({ msg: "Security answer is incorrect" });
     }
