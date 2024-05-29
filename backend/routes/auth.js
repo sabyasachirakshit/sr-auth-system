@@ -24,13 +24,21 @@ const validateRegisterInput = (
 };
 
 router.post("/register", async (req, res) => {
-  const { username, firstname, lastname, number, password,securityQuestion,securityAnswer } = req.body;
-  const validationError = validateRegisterInput(
+  const {
     username,
     firstname,
     lastname,
     number,
     password,
+    securityQuestion,
+    securityAnswer,
+  } = req.body;
+  const validationError = validateRegisterInput(
+    username,
+    firstname,
+    lastname,
+    number,
+    password
   );
   if (validationError) {
     return res.status(400).json({ msg: validationError });
@@ -93,52 +101,43 @@ router.post("/login", async (req, res) => {
 });
 
 // routes/auth.js
-router.post('/forgot-password', async (req, res) => {
+router.post("/forgot-password", async (req, res) => {
   const { username } = req.body;
   try {
-    const user = await User.findOne({ username:username });
+    const user = await User.findOne({ username: username });
     if (!user) {
-      return res.status(400).json({ msg: 'User not found' });
+      return res.status(400).json({ msg: "User not found" });
     }
 
     res.status(200).json({ securityQuestion: user.securityQuestion });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).send("Server error");
   }
 });
 
-router.post('/reset-password', async (req, res) => {
+router.post("/reset-password", async (req, res) => {
   const { username, securityAnswer, newPassword } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username: username });
     if (!user) {
-      return res.status(400).json({ msg: 'User not found' });
+      return res.status(400).json({ msg: "User not found" });
     }
 
     const isMatch = securityAnswer === user.securityAnswer;
     if (!isMatch) {
-      return res.status(400).json({ msg: 'Security answer is incorrect' });
+      return res.status(400).json({ msg: "Security answer is incorrect" });
     }
-    
-    console.log("This was old pass:",user.password);
-    console.log("This was new Paswword:",newPassword);
-    try{
-      console.log("attempting..");
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(newPassword, salt);
-      await user.save();
-      console.log("success");
-    }catch(err){
-      console.log(err);
-    }
-    
 
-    res.status(200).json({ msg: 'Password has been reset successfully' });
+    user.password = newPassword;
+
+    await user.save();
+
+    res.status(200).json({ msg: "Password has been reset successfully" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).send("Server error");
   }
 });
 
