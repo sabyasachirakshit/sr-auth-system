@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Navigate, Link } from "react-router-dom";
 import { Modal, Button, message } from "antd";
+import Todo from "./ToDo";
 
 const Container = styled.div`
   padding: 20px;
@@ -107,6 +108,7 @@ const Dashboard = () => {
       <Link to="/logout">
         <button>Logout</button>
       </Link>
+      
       <Button type="danger" onClick={showModal}>
         Delete Account
       </Button>
@@ -123,6 +125,7 @@ const Dashboard = () => {
           undone.
         </p>
       </Modal>
+      <Todo />
     </Container>
   );
 };
