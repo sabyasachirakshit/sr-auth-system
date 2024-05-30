@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const chatRoutes = require("./routes/chat");
 const todoRoutes = require('./routes/todo');
 const config = require('./config');
 const cors = require('cors');
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/user/chat', chatRoutes);
 app.use('/api/todo', todoRoutes);
 
 // Start the server
