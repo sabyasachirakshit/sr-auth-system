@@ -25,7 +25,6 @@ router.get("/:participantId", auth, async (req, res) => {
     const chats = await Chat.find({
       participants: { $all: [req.user.id, req.params.participantId] }
     }).populate("participants", "username");
-    console.log("chats are:",chats);
     res.json(chats);
   } catch (err) {
     console.error(err.message);
