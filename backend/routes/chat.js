@@ -3,14 +3,29 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const Chat = require("../models/ChatModel");
+const User = require("../models/User");
 
-// Get all chats for a user
-router.get("/", auth, async (req, res) => {
+//get all users
+router.get('/users', async (req, res) => {
   try {
-    const chats = await Chat.find({ participants: req.user.id }).populate(
-      "participants",
-      "username"
-    );
+    // Fetch all users, returning only their _id and username
+    const users = await User.find({}, '_id username');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+module.exports = router;
+
+// Get all chats for a user with a specific participant
+router.get("/:participantId", auth, async (req, res) => {
+  try {
+    const chats = await Chat.find({
+      participants: { $all: [req.user.id, req.params.participantId] }
+    }).populate("participants", "username");
+    console.log("chats are:",chats);
     res.json(chats);
   } catch (err) {
     console.error(err.message);
