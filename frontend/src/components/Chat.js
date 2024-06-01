@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input, Button, List, Select, notification } from "antd";
 import io from "socket.io-client";
-import moment from "moment"; // Import moment.js for date formatting
+import moment from "moment";  // Import moment.js for date formatting
 
 const { Option } = Select;
 
@@ -105,11 +105,9 @@ const Chat = ({ user }) => {
         (newMessage.sender._id === receiverId &&
           receivedReceiverId === user._id)
       ) {
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.optimisticId && msg.message === newMessage.message
-              ? newMessage
-              : msg
+        setMessages((prevMessages) => 
+          prevMessages.map((msg) => 
+            msg.optimisticId && msg.message === newMessage.message ? newMessage : msg
           )
         );
       }
@@ -186,14 +184,9 @@ const Chat = ({ user }) => {
         renderItem={(msg) => (
           <List.Item>
             <div>
-              <strong>
-                {msg.sender._id === user._id ? "You" : msg.sender.username}:
-              </strong>{" "}
-              {msg.message}
+              <strong>{msg.sender._id === user._id ? "You" : msg.sender.username}:</strong> {msg.message}
               <br />
-              <span style={{ fontSize: "0.8em", color: "gray" }}>
-                {moment(msg.timestamp).format("YYYY-MM-DD HH:mm:ss")}
-              </span>
+              <span style={{ fontSize: "0.8em", color: "gray" }}>{moment(msg.timestamp).format('h:mm A D MMMM YYYY')}</span>
             </div>
           </List.Item>
         )}
