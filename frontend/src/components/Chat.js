@@ -104,7 +104,11 @@ const Chat = ({ user }) => {
         (newMessage.sender._id === receiverId &&
           receivedReceiverId === user._id)
       ) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setMessages((prevMessages) => 
+          prevMessages.map((msg) => 
+            msg.optimisticId && msg.message === newMessage.message ? newMessage : msg
+          )
+        );
       }
     };
 
@@ -121,15 +125,26 @@ const Chat = ({ user }) => {
 
   const handleSendMessage = async () => {
     if (message.trim()) {
+      const optimisticId = Date.now(); // Generate a temporary ID for the optimistic message
       const newMessage = {
-        senderId: user._id,
+        sender: { _id: user._id, username: "You" }, // Mocking the sender
         receiverId,
         message,
+        optimisticId,
       };
+
+      // Optimistic UI update
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessage("");
 
       try {
         if (socketRef.current) {
-          socketRef.current.emit("sendMessage", newMessage);
+          socketRef.current.emit("sendMessage", {
+            senderId: user._id,
+            receiverId,
+            message,
+            optimisticId,
+          });
         }
       } catch (error) {
         console.error("Error sending message:", error);
@@ -137,9 +152,12 @@ const Chat = ({ user }) => {
           message: "Error",
           description: "Failed to send message. Please try again later.",
         });
-      }
 
-      setMessage("");
+        // Rollback optimistic UI update
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.optimisticId !== optimisticId)
+        );
+      }
     }
   };
 
