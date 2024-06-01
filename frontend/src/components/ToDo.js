@@ -32,6 +32,10 @@ const Todo = () => {
   };
 
   const handleAddTodo = async () => {
+    if (newTodo === "") {
+      message.error("Please name your task", 3);
+      return;
+    }
     const msg = message.loading("Adding task..", 3);
     const token = localStorage.getItem("token");
     try {
@@ -92,7 +96,7 @@ const Todo = () => {
       );
       const updatedTodo = await response.json();
       setTodos(todos.map((t) => (t._id === updatedTodo._id ? updatedTodo : t)));
-      message.success("Task updated!",3)
+      message.success("Task updated!", 3);
     } catch (err) {
       message.error(err, 3);
     } finally {
