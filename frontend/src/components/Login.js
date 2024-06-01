@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
-import { Spin,message } from "antd"; // Import Ant Design spinner
+import { message } from "antd"; // Import Ant Design spinner
 
 const Container = styled.div`
   display: flex;

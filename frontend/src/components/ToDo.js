@@ -63,6 +63,7 @@ const Todo = () => {
     const token = localStorage.getItem("token");
     const msg = message.loading("Deleting Task..", 3);
     try {
+      //eslint-disable-next-line
       const response = await fetch(`http://localhost:5000/api/todo/${id}`, {
         method: "DELETE",
         headers: {
