@@ -1,0 +1,5 @@
+Error Handling: Improved error handling and user notifications for network failures.
+Optimistic UI Updates: Immediate UI updates for sent messages before server confirmation.
+Message Timestamps: Display timestamps for messages.
+Typing Indicator: Show when the other user is typing.
+Message Read Status: Indicate whether messages have been read by the receiver.

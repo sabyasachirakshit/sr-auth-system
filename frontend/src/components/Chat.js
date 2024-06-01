@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Input, Button, List, Select } from "antd";
+import { Input, Button, List, Select, notification } from "antd";
 import io from "socket.io-client";
 
 const { Option } = Select;
@@ -37,6 +37,10 @@ const Chat = ({ user }) => {
         setUsers(data);
       } catch (error) {
         console.error("Error fetching users:", error);
+        notification.error({
+          message: "Error",
+          description: "Failed to fetch users. Please try again later.",
+        });
       }
     };
 
@@ -73,6 +77,10 @@ const Chat = ({ user }) => {
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
+      notification.error({
+        message: "Error",
+        description: "Failed to fetch messages. Please try again later.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -119,15 +127,24 @@ const Chat = ({ user }) => {
         message,
       };
 
-      if (socketRef.current) {
-        socketRef.current.emit("sendMessage", newMessage);
+      try {
+        if (socketRef.current) {
+          socketRef.current.emit("sendMessage", newMessage);
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+        notification.error({
+          message: "Error",
+          description: "Failed to send message. Please try again later.",
+        });
       }
+
       setMessage("");
     }
   };
 
   return (
-    <div style={{padding:20}}>
+    <div style={{ padding: 20 }}>
       <h2>Chat</h2>
       <Select
         placeholder="Select a user to chat"
