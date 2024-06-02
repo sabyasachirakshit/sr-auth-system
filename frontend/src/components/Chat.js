@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input, Button, List, Select, notification } from "antd";
 import io from "socket.io-client";
-import moment from "moment";  // Import moment.js for date formatting
 
 const { Option } = Select;
 
@@ -105,11 +104,7 @@ const Chat = ({ user }) => {
         (newMessage.sender._id === receiverId &&
           receivedReceiverId === user._id)
       ) {
-        setMessages((prevMessages) => 
-          prevMessages.map((msg) => 
-            msg.optimisticId && msg.message === newMessage.message ? newMessage : msg
-          )
-        );
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
     };
 
@@ -126,27 +121,15 @@ const Chat = ({ user }) => {
 
   const handleSendMessage = async () => {
     if (message.trim()) {
-      const optimisticId = Date.now(); // Generate a temporary ID for the optimistic message
       const newMessage = {
-        sender: { _id: user._id, username: "You" }, // Mocking the sender
+        senderId: user._id,
         receiverId,
         message,
-        timestamp: new Date().toISOString(), // Add timestamp here
-        optimisticId,
       };
-
-      // Optimistic UI update
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setMessage("");
 
       try {
         if (socketRef.current) {
-          socketRef.current.emit("sendMessage", {
-            senderId: user._id,
-            receiverId,
-            message,
-            optimisticId,
-          });
+          socketRef.current.emit("sendMessage", newMessage);
         }
       } catch (error) {
         console.error("Error sending message:", error);
@@ -154,12 +137,9 @@ const Chat = ({ user }) => {
           message: "Error",
           description: "Failed to send message. Please try again later.",
         });
-
-        // Rollback optimistic UI update
-        setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.optimisticId !== optimisticId)
-        );
       }
+
+      setMessage("");
     }
   };
 
@@ -183,11 +163,10 @@ const Chat = ({ user }) => {
         dataSource={messages}
         renderItem={(msg) => (
           <List.Item>
-            <div>
-              <strong>{msg.sender._id === user._id ? "You" : msg.sender.username}:</strong> {msg.message}
-              <br />
-              <span style={{ fontSize: "0.8em", color: "gray" }}>{moment(msg.timestamp).format('h:mm A D MMMM YYYY')}</span>
-            </div>
+            <strong>
+              {msg.sender._id === user._id ? "You" : msg.sender.username}:{" "}
+            </strong>
+            {msg.message}
           </List.Item>
         )}
       />
